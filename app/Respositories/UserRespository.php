@@ -59,7 +59,8 @@ class UserRespository
         $validator = Validator::make($userData, [
             'name' => 'required|string',
             'email' => 'required|email|unique:users',
-            'password' => 'required|string|min:6|max:50'
+            'password' => 'required|string|min:6|max:50',
+            'address'=>'required|string'
         ]);
         //Send failed response if request is not valid
         if ($validator->fails()) {
@@ -69,6 +70,7 @@ class UserRespository
         $user = User::create([
             'name' => $userData['name'],
             'email' => $userData['email'],
+            'address'=>$userData['address'],
             'password' => bcrypt($userData['password'])
         ]);
         //User created, return success response
