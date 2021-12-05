@@ -58,8 +58,8 @@ function getGoogleApiDurations($data){
 
     $array=[
          'meetingTime'=>$meetingTime,
-        'leaveOfficeTime'=> $leaveOfficeTime,
-        'returnToOffice'=>$returnToOfficeTime
+         'leaveOfficeTime'=> $leaveOfficeTime,
+         'returnOfficeTime'=>$returnToOfficeTime
     ];
 
 

@@ -17,6 +17,8 @@ class CreateAppointmentsTable extends Migration
             $table->id();
             $table->string('appointment_address',60);
             $table->dateTime('appointment_time');
+            $table->dateTime('leave_office_time');
+            $table->dateTime('return_office_time');
             $table->unsignedBigInteger('user_id');
             $table->foreign('user_id')->references('id')->on('users');
             $table->unsignedBigInteger('contact_id');

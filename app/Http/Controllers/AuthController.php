@@ -26,21 +26,18 @@ class AuthController extends Controller
     // Register new user(worker)
     public function register(Request $request)
     {
-         return $this->userRespository->store($request->only('name', 'email', 'password'));
+         return $this->userRespository->store($request->all());
     }
    // Login/ create/check token
     public function authenticate(Request $request)
     {
 
-       return $this->userRespository->userAuth($request->only('email', 'password'));
+       return $this->userRespository->userAuth($request->all());
     }
    //info
     public function info(Request $request)
     {
-    //    return response()->json(['user' => auth()->user()]);
       return  $this->userRespository->info();
-   /*     $user = JWTAuth::authenticate($request->token);
-        return response()->json(['user' => $user]);*/
     }
     // Logout
     public function logout(Request $request)
