@@ -15,20 +15,22 @@ Route::group(['middleware' => ['jwt.verify']], function() {
 
     //contacts
     Route::prefix('contact')->group(function (){
-        Route::post('register', [ContactController::class, 'register']);
+        Route::post('create', [ContactController::class, 'create']);
         Route::get('info', [ContactController::class, 'info']);
         Route::get('list', [ContactController::class, 'listContacts']);
-        Route::put('update', [ContactController::class, 'update']);
-        Route::delete('delete/{id}', [ContactController::class, 'delete']);
+        Route::post('update', [ContactController::class, 'update']);
+        Route::get('delete', [ContactController::class, 'delete']);
     });
 
     //appointments
     Route::prefix('appointment')->group(function (){
         Route::post('create', [AppointmentController::class, 'create']);
-        Route::get('info', [ContactController::class, 'info']);
-        Route::get('list', [ContactController::class, 'listContacts']);
-        Route::put('update', [ContactController::class, 'update']);
-        Route::delete('delete/{id}', [ContactController::class, 'delete']);
+        Route::get('info', [AppointmentController::class, 'info']);
+        Route::get('list', [AppointmentController::class, 'listAppointments']);
+        Route::post('update', [AppointmentController::class, 'update']);
+        Route::get('delete', [AppointmentController::class, 'delete']);
     });
+
+
 
 });

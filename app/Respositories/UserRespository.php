@@ -22,7 +22,9 @@ class UserRespository
 
         //Send failed response if request is not valid
         if ($validator->fails()) {
-            return response()->json(['error' => $validator->messages()], 200);
+            return response()->json([
+                'success'=>false,
+                'error' => $validator->messages()], 200);
         }
 
         //Request is validated
@@ -48,9 +50,10 @@ class UserRespository
 
         //Token created, return with success response and jwt token
         return response()->json([
+            'success'=>true,
             'access_token' => $token,
             'token_type' => 'bearer',
-            'expires_in' => auth()->factory()->getTTL() * 120
+            'expires_in' => auth()->factory()->getTTL() * 60
         ]);
     }
     public function store($userData){
@@ -64,7 +67,9 @@ class UserRespository
         ]);
         //Send failed response if request is not valid
         if ($validator->fails()) {
-            return response()->json(['error' => $validator->messages()], 200);
+            return response()->json([
+                'success'=>false,
+                'error' => $validator->messages()], 200);
         }
         //Request is valid, create new user
         $user = User::create([
@@ -82,7 +87,9 @@ class UserRespository
 
     }
     public function info(){
-        return response()->json(['user' => auth()->user()]);
+        return response()->json([
+            'success'=>true,
+            'user' => auth()->user()]);
     }
     public function logout($userData){
 

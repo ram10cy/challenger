@@ -1,8 +1,6 @@
 <?php
 
 namespace App\Http\Controllers;
-
-use App\Models\ContactModel;
 use App\Respositories\ContactRespository;
 use Illuminate\Http\Request;
 
@@ -16,11 +14,11 @@ class ContactController extends Controller
         $this->contactRespository = $contactRespository;
     }
 
-    // Register new contact
-    public function register(Request $request){
+    // Create new contact
+    public function create(Request $request){
         return $this->contactRespository->store($request->all());
     }
-    //Contact Info
+    //Contact info
     public function info(Request $request){
       return $this->contactRespository->info($request->contactId);
     }
@@ -33,8 +31,8 @@ class ContactController extends Controller
         return $this->contactRespository->listContacts();
     }
     //delete contact
-    public function delete($contactId){
-        return $this->contactRespository->delete($contactId);
+    public function delete(Request $request){
+        return $this->contactRespository->delete($request->id);
     }
 
 }

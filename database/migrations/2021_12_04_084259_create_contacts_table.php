@@ -21,7 +21,7 @@ class CreateContactsTable extends Migration
             $table->string('address',60);
             $table->string('phone',20);
             $table->unsignedBigInteger('user_id');
-            $table->foreign('user_id')->references('id')->on('users');
+            $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
             $table->softDeletes();
             $table->timestamps();
         });

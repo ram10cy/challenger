@@ -22,7 +22,7 @@ class CreateAppointmentsTable extends Migration
             $table->unsignedBigInteger('user_id');
             $table->foreign('user_id')->references('id')->on('users');
             $table->unsignedBigInteger('contact_id');
-            $table->foreign('contact_id')->references('id')->on('contacts');
+            $table->foreign('contact_id')->references('id')->on('contacts')->onDelete('cascade');
             $table->tinyInteger('status')->default(1); // status(1) -> active appointments, status(0) -> passive appointments
             $table->softDeletes();
             $table->timestamps();
