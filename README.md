@@ -25,9 +25,10 @@ Estate agnecies need to arrange their apointments according to their free time. 
 - !Composer needs to be installed your computer!
 - Copy folder to local folder
 - run command: composer update
-- create .env  file according to your DB settings (yyouc an copy from env.example)
+- create .env  file according to your DB settings (you can copy from env.example)
 - run command for generate app key: php artisan key:generate
 - run command migrate database: php artisan migrate 
+- run command for generating jwt secret key: php artisan jwt:generate 
 - run command to start app: php artisan serve
 - you can send request 
 
