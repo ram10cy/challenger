@@ -36,6 +36,14 @@ class AppointmentRespository
                 'error' => 'Cotact Id number:'.$appointmentData['contactId'].' doesnt exists']);
         }
 
+        //check if another appointment exists on this period of time
+        if (AppointmentModel::where('leave_office_time', '<', $appointmentData['appointmentDate'])
+                            ->where('return_office_time', '>', $appointmentData['appointmentDate'])->exists()) {
+            return response()->json([
+                'success'=>false,
+                'error' => 'You are not available for meeting at this time!']);
+        }
+
         $user=auth()->user();
         $userCoordinates=getPostApiCoordinates($user->address);
         $contactCoordinates=getPostApiCoordinates($appointmentData['appointmentAddress']);
