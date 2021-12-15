@@ -11,7 +11,20 @@ use Symfony\Component\HttpFoundation\Response;
 
 class ContactRespository
 {
+    protected $contact;
 
+    /**
+     * AppointModel constructor.
+     * @param AppointmentModel $user
+     */
+    public function __construct(ContactModel $contact)
+    {
+        $this->contact = $contact;
+    }
+    /**
+     * @param $contactData
+     * @return mixed
+     */
     public function store($contactData){
         //Validate data
         $validator = Validator::make($contactData, [
@@ -30,7 +43,7 @@ class ContactRespository
         }
 
         //Request is valid, create new contact
-        $contact = ContactModel::create([
+        $contact = $this->contact->create([
             'name' => $contactData['name'],
             'surname' => $contactData['surname'],
             'email' => $contactData['email'],
@@ -47,8 +60,12 @@ class ContactRespository
         ], Response::HTTP_OK);
 
     }
+    /**
+     * @param $contactId
+     * @return mixed
+     */
     public function info($contactId){
-        $contact = ContactModel::find($contactId);
+        $contact = $this->contact->find($contactId);
         if($contact)
             return response()->json([
                 'success'=>true,
@@ -60,7 +77,7 @@ class ContactRespository
           ]);
     }
     public function listContacts(){
-        $contact = ContactModel::where('user_id',auth()->user()->id)->get();
+        $contact = $this->contact->where('user_id',auth()->user()->id)->get();
         if($contact->count())
             return response()->json([
                 'success'=>true,
@@ -71,6 +88,10 @@ class ContactRespository
                 'error' => 'You have not  any contact yet, first create one ;)'
               ]);
     }
+    /**
+     * @param $contactData
+     * @return mixed
+     */
     public function update($contactData){
 
         //Validate data
@@ -91,14 +112,14 @@ class ContactRespository
         }
 
 
-        if(ContactModel::where('id',$contactData['id'])->doesntExist())
+        if($this->contact->where('id',$contactData['id'])->doesntExist())
             return response()->json([
                 'success'=>false,
                 'error' => 'Contact not found! Please check Contact Id'], 200);
 
         $user=auth()->user();
         //Request is valid, create new contact
-        $contact = ContactModel::find($contactData['id'])->update([
+        $contact = $this->contact->find($contactData['id'])->update([
             'name' => $contactData['name'],
             'surname' => $contactData['surname'],
             'email' => $contactData['email'],
@@ -111,12 +132,16 @@ class ContactRespository
         return response()->json([
             'success' => true,
             'message' => 'Contact updated successfully',
-            'data' => ContactModel::find($contactData['id'])
+            'data' => $this->contact->find($contactData['id'])
         ], Response::HTTP_OK);
 
     }
+    /**
+     * @param $contactId
+     * @return mixed
+     */
     public function delete($contactId){
-        if($contact=ContactModel::find($contactId)){
+        if($contact=$this->contact->find($contactId)){
             AppointmentModel::where('contact_id',$contactId)->delete();
             $contact->delete();
             return response()->json([

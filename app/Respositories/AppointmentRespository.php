@@ -11,6 +11,23 @@ use Symfony\Component\HttpFoundation\Response;
 
 class AppointmentRespository
 {
+
+    protected $appointment;
+
+    /**
+     * AppointModel constructor.
+     * @param AppointmentModel $user
+     */
+    public function __construct(AppointmentModel $appointment)
+    {
+        $this->appointment = $appointment;
+    }
+
+
+    /**
+     * @param $appointmentData
+     * @return mixed
+     */
     public function create($appointmentData){
 
 
@@ -37,7 +54,7 @@ class AppointmentRespository
         }
 
         //check if another appointment exists on this period of time
-        if (AppointmentModel::where('leave_office_time', '<', $appointmentData['appointmentDate'])
+        if ($this->appointment->where('leave_office_time', '<', $appointmentData['appointmentDate'])
                             ->where('return_office_time', '>', $appointmentData['appointmentDate'])->exists()) {
             return response()->json([
                 'success'=>false,
@@ -68,7 +85,7 @@ class AppointmentRespository
 
 
         //Request is valid, create new appintment
-        $appointment = AppointmentModel::create([
+        $appointment = $this->appointment->create([
             'appointment_address' => $appointmentData['appointmentAddress'],
             'appointment_time' => $durations['meetingTime'],
             'leave_office_time'=>$durations['leaveOfficeTime'],
@@ -87,6 +104,10 @@ class AppointmentRespository
         ], Response::HTTP_OK);
 
     }
+    /**
+     * @param $appointmentData
+     * @return mixed
+     */
     public function update($appointmentData){
 
         $user=auth()->user();
@@ -106,7 +127,7 @@ class AppointmentRespository
                 'error' => $validator->messages()], 200);
         }
 
-        if(AppointmentModel::where('id',$appointmentData['id'])->doesntExist())
+        if($this->appointment->where('id',$appointmentData['id'])->doesntExist())
             return response()->json([
                 'success'=>false,
                 'error' => 'Appointment not found! Please check Appointment Id'], 200);
@@ -137,7 +158,7 @@ class AppointmentRespository
 
         $durations=  getGoogleApiDurations($apiData);
         //Request is valid, update appointment
-        AppointmentModel::find($appointmentData['id'])->update([
+        $this->appointment->find($appointmentData['id'])->update([
             'appointment_address' => $appointmentData['appointmentAddress'],
             'appointment_time' => $durations['meetingTime'],
             'leave_office_time'=>$durations['leaveOfficeTime'],
@@ -147,7 +168,7 @@ class AppointmentRespository
 
         ]);
 
-        $appointment=AppointmentModel::find($appointmentData['id']);
+        $appointment=$this->appointment->find($appointmentData['id']);
         //Appointment updated, return success response
         return response()->json([
             'success' => true,
@@ -156,8 +177,12 @@ class AppointmentRespository
         ], Response::HTTP_OK);
 
     }
+    /**
+     * @param $appointmentId
+     * @return mixed
+     */
     public function info($appointmentId){
-        $appointment = AppointmentModel::find($appointmentId);
+        $appointment = $this->appointment->find($appointmentId);
         if($appointment)
             return response()->json([
                 'success'=>true,
@@ -167,6 +192,10 @@ class AppointmentRespository
                 'success'=>false,
                 'appointment' => 'Appointment id:'.$appointmentId.' not found!']);
     }
+    /**
+     * @param $appointmentDates
+     * @return mixed
+     */
     public function listAppointments($appointmentDates){
 
         //Validate data
@@ -184,7 +213,7 @@ class AppointmentRespository
 
         if($appointmentDates['fromDate']) {
             if($appointmentDates['toDate']) {
-                $appointments=AppointmentModel::whereBetween('created_at', [$appointmentDates['fromDate'], $appointmentDates['toDate']])->where('status',1)->get();
+                $appointments=$this->appointment->whereBetween('created_at', [$appointmentDates['fromDate'], $appointmentDates['toDate']])->where('status',1)->get();
                 if($appointments->count())
                     return response()->json([
                         'success'=>true,
@@ -197,7 +226,7 @@ class AppointmentRespository
                         'error' => 'According to filter  you have not  any appointments yet, first create one ;)']);
             }
             else {
-                $appointments=AppointmentModel::where('created_at', '>=',$appointmentDates['fromDate'])->where('status',1)->get();
+                $appointments=$this->appointment->where('created_at', '>=',$appointmentDates['fromDate'])->where('status',1)->get();
                 if($appointments->count())
                     return response()->json([
                         'success'=>true,
@@ -214,7 +243,7 @@ class AppointmentRespository
         }
 
         if($appointmentDates['toDate']) {
-            $appointments=AppointmentModel::where('created_at', '<=',$appointmentDates['toDate'])->where('status',1)->get();
+            $appointments=$this->appointment->where('created_at', '<=',$appointmentDates['toDate'])->where('status',1)->get();
             if($appointments->count())
                 return response()->json([
                     'success'=>true,
@@ -228,7 +257,7 @@ class AppointmentRespository
         }
 
 
-        $appointments=AppointmentModel::where('status',1)->get();
+        $appointments=$this->appointment->where('status',1)->get();
         if($appointments->count())
             return response()->json([
                 'fromDate'=>'No filter',
@@ -240,8 +269,12 @@ class AppointmentRespository
                 'error' => 'According to filter you have not  any appointments  yet, first create one ;)']);
 
     }
+    /**
+     * @param $appointmentId
+     * @return mixed
+     */
     public function delete($appointmentId){
-        if($appointment=AppointmentModel::find($appointmentId)){
+        if($appointment=$this->appointment->find($appointmentId)){
             $appointment->delete();
             return response()->json([
                 'success'=>true,

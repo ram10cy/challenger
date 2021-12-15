@@ -12,6 +12,17 @@ use Tymon\JWTAuth\Facades\JWTAuth;
 
 class UserRespository
 {
+    protected $user;
+
+    /**
+     * UserRepository constructor.
+     * @param User $user
+     */
+    public function __construct(User $user)
+    {
+        $this->user = $user;
+    }
+
 
     public function userAuth($credentials){
         //valid credential
@@ -56,6 +67,11 @@ class UserRespository
             'expires_in' => auth()->factory()->getTTL() * 60
         ]);
     }
+
+    /**
+     * @param $userData
+     * @return mixed
+     */
     public function store($userData){
         //Validate data
 
@@ -72,7 +88,7 @@ class UserRespository
                 'error' => $validator->messages()], 200);
         }
         //Request is valid, create new user
-        $user = User::create([
+        $user = $this->user->create([
             'name' => $userData['name'],
             'email' => $userData['email'],
             'address'=>$userData['address'],
@@ -91,6 +107,10 @@ class UserRespository
             'success'=>true,
             'user' => auth()->user()]);
     }
+    /**
+     * @param $userData
+     * @return mixed
+     */
     public function logout($userData){
 
         try {
